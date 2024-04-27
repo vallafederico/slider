@@ -2,14 +2,18 @@
 
 [Deploy](fslide-0.surge.sh)
 
-#### TODO
+## Features
 
-##### Animations
+- [x] snap or not snap (toggleable) V
+- [x] get speed V
+- [x] get current slide and assign class (+ js events) V
+- [ ] loop or non loop WIP
+- [x] respond to keyboard and buttons V
+- [x] parallax items w/ per item configurable parallax
+- [ ] autoscroll
 
-- [x] text class
-- [ ] track class (?)
+### Ideas
 
-##### Gl
+### Issues
 
-- [ ] preloader class (should be in gl?)
-- [ ] with emitting promises
+- [ ] speed should be captured also when switching slides via button

@@ -1,5 +1,9 @@
 import { lerp, map, modulo } from "./util/math";
 
+// function symmetricModulo(n, m) {
+//   return ((n % m) + m) % m;
+// }
+
 /* outside ctrls */
 const speedDial = document.querySelector(".speed");
 
@@ -47,6 +51,7 @@ export class Slider {
     this.resize();
     this.init();
 
+    // --- debug
     document.onkeydown = (e) => {
       if (e.key === "ArrowRight") {
         this.slideTo(this.currentSlide + 1);
@@ -54,20 +59,34 @@ export class Slider {
         this.slideTo(this.currentSlide - 1);
       }
     };
+    // --- debug
   }
 
   init() {
-    this.element.addEventListener("pointerdown", this.onDown.bind(this));
-    this.element.addEventListener("pointerup", this.onUp.bind(this));
-    this.element.addEventListener("pointermove", this.onMove.bind(this));
-    this.element.addEventListener("pointerleave", this.onUp.bind(this));
+    this.initParallax();
+    this.initEvents();
 
     // initial state
     this.slides[0].classList.add("active");
   }
 
-  // -- events
+  initEvents() {
+    this.element.addEventListener("pointerdown", this.onDown.bind(this));
+    this.element.addEventListener("pointerup", this.onUp.bind(this));
+    this.element.addEventListener("pointermove", this.onMove.bind(this));
+    this.element.addEventListener("pointerleave", this.onUp.bind(this));
+  }
 
+  initParallax() {
+    this.parallax = this.slides.map((slide, i) => {
+      return { item: slide.querySelector("[data-slide='parallax']") };
+    });
+    this.parallax.forEach((item) => {
+      item.amount = +item.item.getAttribute("data-parallax") || 50;
+    });
+  }
+
+  // -- events
   onDown(e) {
     this.pointer.ox = e.clientX;
     this.pointerDown = true;
@@ -158,9 +177,19 @@ export class Slider {
   }
 
   renderDOM() {
-    this.slides.forEach((slide) => {
+    this.slides.forEach((slide, index) => {
+      this.renderSlide(index);
       slide.style.transform = `translateX(${this.target * this.store.itemWidth}px)`;
     });
+  }
+
+  renderSlide(index) {
+    // parallax
+    if (this.parallax.length > 0 && this.parallax[index]) {
+      const parallax = this.target + index;
+      this.parallax[index].item.style.transform =
+        `translateX(${parallax * this.parallax[index].amount}%)`;
+    }
   }
 
   renderRounding() {
