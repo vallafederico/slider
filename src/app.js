@@ -27,6 +27,7 @@ class App {
     this.initEvents();
 
     this.slider = new Slider();
+    window.slider = this.slider;
 
     /** RAF should come from gsap */
     gsap.ticker.add((t) => this.render(t));

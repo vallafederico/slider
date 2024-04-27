@@ -1,11 +1,11 @@
-import { lerp, clamp, map } from "./util/math";
+import { lerp, map, modulo } from "./util/math";
 
 /* outside ctrls */
 const speedDial = document.querySelector(".speed");
 
 export class Slider {
   // params
-  _center = false;
+  _center = true;
   _factor = 0.008;
   _isEnabled = true;
   _snapping = true;
@@ -114,7 +114,6 @@ export class Slider {
     if (this.currentSlide === curr) return;
 
     queueMicrotask(() => {
-      // console.log("[]", curr);
       this.slides[curr].classList.add("active");
       this.slides[this.currentSlide].classList.remove("active");
 
@@ -127,14 +126,10 @@ export class Slider {
     this.current = index * -1;
   }
 
-  // -- lifecycle
+  /** Resize */
   resize() {
     let total = 0;
-    this.slides.forEach((slide, i) => {
-      total += slide.clientWidth;
-      console.log(slide.clientWidth);
-    });
-
+    this.slides.forEach((slide, i) => (total += slide.offsetWidth));
     this.store.itemWidth = total / this.slides.length;
 
     if (this._center) {
@@ -143,6 +138,7 @@ export class Slider {
     }
   }
 
+  /** Render */
   render() {
     this.time++;
 
@@ -157,7 +153,6 @@ export class Slider {
     this.renderClamp();
 
     this.target = lerp(this.target, this.current, this._lerp);
-    // console.log(this.target);
 
     this.renderDOM();
   }
@@ -171,15 +166,9 @@ export class Slider {
   renderRounding() {
     if (!this.pointerDown && this._snapping) {
       this.rounded = Math.round(this.current);
-
-      // rounding #1
-      // this.current = this.rounded;
-
-      // rounding #2
       const diff = this.rounded - this.current;
       const calc = Math.sign(diff) * Math.pow(Math.abs(diff), 0.75) * 0.1;
       this.current += calc;
-      // console.log(this.current);
     }
   }
 
@@ -195,7 +184,6 @@ export class Slider {
     this.speed = lerp(this.speed, this.lspeed, 0.1);
     this.lspeed *= 0.9;
     speedDial.style.transform = `translateX(${this.speed * 1000}%)`;
-    // console.log(this.speed);
   }
 
   renderProgress() {
