@@ -1,4 +1,4 @@
-import { lerp, map } from "./util/math";
+import { lerp } from "./util/math";
 
 function mod(value, x) {
   return ((value % x) + x) % x;
@@ -8,6 +8,20 @@ function symmetricMod(value, x) {
   let modded = mod(value, 2 * x);
   return modded >= x ? (modded -= 2 * x) : modded;
 }
+
+const lerpOptions = [
+  lerp,
+  (v0, v1, t) => {
+    // ease out quad
+    return v0 - (v1 - v0) * t * (t - 2);
+  },
+  (v0, v1, t) => {
+    // out expo
+    return t === 1 ? v1 : v0 + (v1 - v0) * (1 - Math.pow(2, -10 * t));
+  },
+];
+
+const lerpFunc = lerpOptions[0];
 
 const def = {
   parallax: 50,
@@ -81,8 +95,36 @@ export class Slider {
       }
     };
 
+    const enableToggle = document.querySelector("[data-slider='enable']");
+    enableToggle.onclick = () => {
+      this._enabled = !this._isEnabled;
+      enableToggle.children[0].textContent = this._isEnabled ? "ON" : "OFF";
+    };
+
+    const snappingToggle = document.querySelector("[data-slider='mode']");
+    snappingToggle.onclick = () => {
+      this._snapMode = !this._snapping;
+      snappingToggle.children[0].textContent = this._snapping ? "ON" : "OFF";
+    };
+
+    document.querySelector("[data-slider='next']").onclick = () =>
+      this.slideTo(this.current - 1);
+
+    document.querySelector("[data-slider='prev']").onclick = () =>
+      this.slideTo(this.current + 1);
+
     // --- debug
   }
+
+  /** Interface */
+  set _snapMode(val = true) {
+    this._snapping = val;
+  }
+
+  set _enabled(val = true) {
+    this._isEnabled = val;
+  }
+  /** --- Interface */
 
   init() {
     if (this._parallax) this.initParallax();
@@ -212,7 +254,7 @@ export class Slider {
     this.renderRounding();
     if (!this._infinite) this.renderClamp();
 
-    this.target = lerp(this.target, this.current, this._lerp);
+    this.target = lerpFunc(this.target, this.current, this._lerp);
 
     this.renderDOM();
   }
@@ -263,7 +305,7 @@ export class Slider {
   }
 
   renderSpeed() {
-    this.speed = lerp(this.speed, this.lspeed, this._lerp);
+    this.speed = lerpFunc(this.speed, this.lspeed, this._lerp);
     this.lspeed *= 0.9;
 
     speedDial.style.transform = `translateX(${this.speed * 2000}%)`;

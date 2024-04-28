@@ -10,12 +10,12 @@
   </head>
   <body>
     <div class="w">
-      <div class="head">
-        <h1>Smooothy</h1>
-        <p>version 0.00</p>
-      </div>
-      <!-- page -->
-      <main data-taxi>
+      <div class="ctrl-w">
+        <div class="head">
+          <h1>Smooothy</h1>
+          <p>version 0.00</p>
+        </div>
+
         <div class="ctrl">
           <p>speed <span class="speed-num">0.00</span></p>
 
@@ -32,6 +32,18 @@
           <p>direction <span class="direction-arrow"></span></p>
         </div>
 
+        <div class="ctrl">
+          <button data-slider="enable">toggle enabled (<span>ON</span>)</button>
+          <button data-slider="mode">toggle snap (<span>ON</span>)</button>
+          <div style="display: flex; gap: 1em">
+            <button data-slider="prev">(←) prev slide</button>
+            <button data-slider="next">next slide (→)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- page -->
+      <main data-taxi>
         <article data-taxi-view>
           <section class="sec">
             <div data-slider="w" class="slider">

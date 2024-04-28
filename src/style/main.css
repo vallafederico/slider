@@ -93,15 +93,23 @@ body {
   border: 1px solid pink;
 }
 
-.head {
-  position: fixed;
-  top: 1em;
-  left: 1em;
+button {
+  /* reset button */
+  border: none;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  overflow: visible;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: normal;
 }
 
 /* slider */
 
 .slider {
+  margin-top: 10vh;
   display: flex;
 
   padding-top: 2em;
@@ -175,18 +183,47 @@ body {
   transition: border 1s;
 }
 
-.ctrl {
+.ctrl-w {
   position: fixed;
   top: 2em;
+  left: 2em;
   /* border: 1px solid pink; */
-  height: 10vh;
   width: 100vw;
+  display: flex;
+
+  gap: 4em;
+  justify-content: start;
+}
+
+.head {
+  /* position: fixed; */
+  top: 1em;
+  left: 1em;
+}
+
+.ctrl {
+  top: 2em;
+  left: 20vw;
+  /* border: 1px solid pink; */
 
   display: flex;
   flex-direction: column;
   gap: 0.9em;
-  justify-content: center;
-  align-items: center;
+  justify-content: start;
+  align-items: start;
+}
+
+button {
+  padding: 0.4em 0.8em;
+  border: 1px solid #222;
+  border-radius: 0.5em;
+  background-color: #222;
+  color: #fff;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #333;
 }
 
 .speed-w {

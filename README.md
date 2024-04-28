@@ -2,7 +2,7 @@
 
 ## WIP
 
-[Deploy](smooothy.surge.sh)
+[Deploy](https://smooothy.surge.sh)
 
 ### Features
 
@@ -41,11 +41,11 @@ slide children can have parallax. assign `data-slide="parallax"` to the element.
 
 ##### Setup
 
-| Attribute                | Type      | Default | Description           |
-| ------------------------ | --------- | ------- | --------------------- |
-| [data-slider="w"]        | Mandatory |         | Slides Container      |
-| [data-slider="next"]     | Optional  |         | next slide button     |
-| [data-slider="previous"] | Optional  |         | previous slide button |
+| Attribute            | Type      | Default | Description           |
+| -------------------- | --------- | ------- | --------------------- |
+| [data-slider="w"]    | Mandatory |         | Slides Container      |
+| [data-slider="next"] | Optional  |         | next slide button     |
+| [data-slider="prev"] | Optional  |         | previous slide button |
 
 ##### Options
 
