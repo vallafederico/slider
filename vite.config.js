@@ -2,9 +2,10 @@ import { defineConfig } from "vite";
 // import { resolve } from "path"; // https://vitejs.dev/guide/build.html#multi-page-app
 import { fileURLToPath, URL } from "url";
 import glsl from "vite-plugin-glsl";
+import { qrcode } from "vite-plugin-qrcode";
 
 // plugins
-const plugins = [glsl()];
+const plugins = [glsl(), qrcode()];
 
 export default defineConfig({
   assetsInclude: ["**/*.gltf"],

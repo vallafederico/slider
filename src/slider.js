@@ -1,8 +1,13 @@
 import { lerp, map, modulo } from "./util/math";
 
-// function symmetricModulo(n, m) {
-//   return ((n % m) + m) % m;
-// }
+function mod(value, x) {
+  return ((value % x) + x) % x;
+}
+
+function symmetricMod(value, x) {
+  let modded = mod(value, 2 * x);
+  return modded >= x ? (modded -= 2 * x) : modded;
+}
 
 /* outside ctrls */
 const speedDial = document.querySelector(".speed");
@@ -15,6 +20,8 @@ export class Slider {
   _snapping = true;
   _bouncy = 0.45;
   _lerp = 0.1;
+  _infinite = true;
+  _parallax = false;
 
   // slider
   time = 0;
@@ -28,6 +35,9 @@ export class Slider {
   progress = 0;
 
   pointerDown = false;
+  isDragging = false;
+  // preventClick = false;
+
   pointer = {
     x: 0,
     ox: 0,
@@ -52,6 +62,9 @@ export class Slider {
     this.init();
 
     // --- debug
+
+    this.slides.forEach((slide, i) => {});
+
     document.onkeydown = (e) => {
       if (e.key === "ArrowRight") {
         this.slideTo(this.currentSlide + 1);
@@ -63,7 +76,7 @@ export class Slider {
   }
 
   init() {
-    this.initParallax();
+    if (this._parallax) this.initParallax();
     this.initEvents();
 
     // initial state
@@ -90,6 +103,8 @@ export class Slider {
   onDown(e) {
     this.pointer.ox = e.clientX;
     this.pointerDown = true;
+
+    return false;
   }
 
   onUp(e) {
@@ -169,7 +184,7 @@ export class Slider {
     }
 
     this.renderRounding();
-    this.renderClamp();
+    if (!this._infinite) this.renderClamp();
 
     this.target = lerp(this.target, this.current, this._lerp);
 
@@ -178,17 +193,27 @@ export class Slider {
 
   renderDOM() {
     this.slides.forEach((slide, index) => {
-      this.renderSlide(index);
-      slide.style.transform = `translateX(${this.target * this.store.itemWidth}px)`;
+      const x = this.renderSlide(index, slide);
+      slide.style.transform = `translateX(${x * this.store.itemWidth}px)`;
     });
   }
 
-  renderSlide(index) {
+  renderSlide(index, slide) {
     // parallax
-    if (this.parallax.length > 0 && this.parallax[index]) {
+    if (this.parallax && this.parallax.length > 0 && this.parallax[index]) {
       const parallax = this.target + index;
       this.parallax[index].item.style.transform =
         `translateX(${parallax * this.parallax[index].amount}%)`;
+    }
+
+    // infinite loop
+    if (this._infinite) {
+      let pos = this.target + index;
+      const x = symmetricMod(pos, (this.store.max + 1) / 2);
+
+      return x - index;
+    } else {
+      return this.target;
     }
   }
 
