@@ -97,37 +97,76 @@ body {
 
 .slider {
   display: flex;
-  border: 1px dotted blue;
-  padding-top: 1em;
-  padding-bottom: 1em;
+
+  padding-top: 2em;
+  padding-bottom: 2em;
   width: 50vw;
   max-width: 50vw;
-  /* transform: scale(0.3); */
+  /* overflow: hidden; */
+  cursor: grab;
+
+  border: 2px solid #777;
+
+  counter-reset: slides;
 }
 
 .slide {
-  width: 30vw;
-  flex-shrink: 0;
-  min-height: 30vh;
-  border: 1px dotted red;
   position: relative;
+
+  width: 30vw;
+  min-height: 40vh;
+
+  flex-shrink: 0;
+
+  border: 1px dotted #444;
   box-sizing: border-box;
 
   display: flex;
   justify-content: center;
   align-items: center;
+
+  counter-increment: slides;
+
+  transition: border 1s;
+}
+
+.slide:before {
+  content: counter(slides);
+  font-size: 2em;
+  color: #fff;
+
+  position: absolute;
+  top: 1em;
+  left: 1em;
+  font-size: 0.8em;
 }
 
 .active {
-  border: 1px solid green;
+  border: 1px dotted #999;
+
+  transition: border 1s;
+
   /* background-color: blue; */
 }
 
 .par {
   width: 50%;
-  height: 50%;
-  /* border: 1px solid pink; */
+  /* height: 50%; */
+  aspect-ratio: 1/0.7;
   position: relative;
+  border-radius: 1em;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border: 1px solid #555;
+  transition: border 1s;
+}
+
+.active .par {
+  border: 1px solid #888;
+  transition: border 1s;
 }
 
 .ctrl {
@@ -138,12 +177,38 @@ body {
   width: 100vw;
 
   display: flex;
+  flex-direction: column;
+  gap: 0.9em;
+  justify-content: center;
+  align-items: center;
+}
+
+.speed-w {
+  width: 20vw;
+  border: 1px solid #222;
+  display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .speed {
-  height: 50px;
-  width: 10px;
+  height: 10px;
+  width: 2px;
   background-color: red;
+}
+
+.progress {
+  width: 20vw;
+  border: 1px solid #222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bar {
+  height: 2px;
+  background-color: blue;
+  width: 100%;
+  transform-origin: left center;
+  transition: transform 0.2s;
 }

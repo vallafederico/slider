@@ -1,4 +1,4 @@
-import { lerp, map, modulo } from "./util/math";
+import { lerp, map } from "./util/math";
 
 function mod(value, x) {
   return ((value % x) + x) % x;
@@ -9,19 +9,24 @@ function symmetricMod(value, x) {
   return modded >= x ? (modded -= 2 * x) : modded;
 }
 
+const def = {
+  parallax: 50,
+};
+
 /* outside ctrls */
 const speedDial = document.querySelector(".speed");
+const progressDial = document.querySelector(".bar");
 
 export class Slider {
   // params
   _center = true;
-  _factor = 0.008;
+  _factor = 0.005;
   _isEnabled = true;
   _snapping = true;
   _bouncy = 0.45;
   _lerp = 0.1;
   _infinite = true;
-  _parallax = false;
+  _parallax = true;
 
   // slider
   time = 0;
@@ -67,9 +72,9 @@ export class Slider {
 
     document.onkeydown = (e) => {
       if (e.key === "ArrowRight") {
-        this.slideTo(this.currentSlide + 1);
+        this.slideTo(this.current - 1);
       } else if (e.key === "ArrowLeft") {
-        this.slideTo(this.currentSlide - 1);
+        this.slideTo(this.current + 1);
       }
     };
     // --- debug
@@ -92,10 +97,9 @@ export class Slider {
 
   initParallax() {
     this.parallax = this.slides.map((slide, i) => {
-      return { item: slide.querySelector("[data-slide='parallax']") };
-    });
-    this.parallax.forEach((item) => {
-      item.amount = +item.item.getAttribute("data-parallax") || 50;
+      const item = slide.querySelector("[data-parallax]");
+      const amount = +item.getAttribute("data-parallax") || def.parallax;
+      return { item, amount };
     });
   }
 
@@ -103,6 +107,8 @@ export class Slider {
   onDown(e) {
     this.pointer.ox = e.clientX;
     this.pointerDown = true;
+
+    this.element.style.cursor = "grabbing";
 
     return false;
   }
@@ -114,6 +120,8 @@ export class Slider {
     this.pointer.sx = 0;
     this.pointer.psx = 0;
     this.lspeed = 0;
+
+    this.element.style.cursor = "grab";
   }
 
   onMove(e) {
@@ -125,9 +133,7 @@ export class Slider {
     this.pointer.ox = e.clientX;
     this._direction = this.pointer.x;
 
-    if (this.pointer.psx === 0) {
-      this.pointer.psx = e.screenX;
-    }
+    if (this.pointer.psx === 0) this.pointer.psx = e.screenX;
 
     this.pointer.sx = e.screenX - this.pointer.psx;
     this.lspeed += this.pointer.sx * 0.01;
@@ -143,21 +149,28 @@ export class Slider {
   }
 
   set _currentSlide(val) {
-    const curr = Math.round(val * -1);
+    let curr = Math.round(val * -1);
+    if (this._infinite) curr = mod(curr, this.store.max + 1);
+
     if (curr < 0 || curr > this.store.max) return;
     if (this.currentSlide === curr) return;
 
     queueMicrotask(() => {
       this.slides[curr].classList.add("active");
       this.slides[this.currentSlide].classList.remove("active");
-
       this.currentSlide = curr;
     });
   }
 
   slideTo(index) {
     if (!this._isEnabled) return;
-    this.current = index * -1;
+
+    // speed calculation
+    const speed = this.current - index;
+    this.lspeed -= speed;
+
+    // > slide to
+    this.current = index;
   }
 
   /** Resize */
@@ -180,7 +193,7 @@ export class Slider {
     this.renderProgress();
 
     if (this.time % 5 === 0) {
-      this.renderCurrent();
+      this._currentSlide = this.current;
     }
 
     this.renderRounding();
@@ -202,8 +215,10 @@ export class Slider {
     // parallax
     if (this.parallax && this.parallax.length > 0 && this.parallax[index]) {
       const parallax = this.target + index;
+      const x = symmetricMod(parallax, (this.store.max + 1) / 2);
+
       this.parallax[index].item.style.transform =
-        `translateX(${parallax * this.parallax[index].amount}%)`;
+        `translateX(${x * this.parallax[index].amount}%)`;
     }
 
     // infinite loop
@@ -235,16 +250,14 @@ export class Slider {
   }
 
   renderSpeed() {
-    this.speed = lerp(this.speed, this.lspeed, 0.1);
+    this.speed = lerp(this.speed, this.lspeed, this._lerp);
     this.lspeed *= 0.9;
     speedDial.style.transform = `translateX(${this.speed * 1000}%)`;
   }
 
   renderProgress() {
-    this.progress = map(this.current, 0, this.store.max, 0, 1);
-  }
+    this.progress = mod(map(Math.abs(this.target), 0, this.store.max, 0, 1), 1);
 
-  renderCurrent() {
-    this._currentSlide = this.current;
+    progressDial.style.transform = `scaleX(${this.progress})`;
   }
 }
