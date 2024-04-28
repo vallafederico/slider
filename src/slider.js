@@ -15,7 +15,9 @@ const def = {
 
 /* outside ctrls */
 const speedDial = document.querySelector(".speed");
+const speedNum = document.querySelector(".speed-num");
 const progressDial = document.querySelector(".bar");
+const progressNum = document.querySelector(".progress-num");
 
 export class Slider {
   // params
@@ -252,12 +254,20 @@ export class Slider {
   renderSpeed() {
     this.speed = lerp(this.speed, this.lspeed, this._lerp);
     this.lspeed *= 0.9;
+
     speedDial.style.transform = `translateX(${this.speed * 1000}%)`;
+    speedNum.textContent = parseFloat(this.speed).toFixed(2);
   }
 
   renderProgress() {
-    this.progress = mod(map(Math.abs(this.target), 0, this.store.max, 0, 1), 1);
+    if (this._infinite) {
+      const curr = mod(-this.current, this.store.max + 1);
+      this.progress = map(curr, 0, this.store.max, 0, 1);
+    } else {
+      this.progress = map(-this.current, 0, this.store.max, 0, 1);
+    }
 
     progressDial.style.transform = `scaleX(${this.progress})`;
+    progressNum.textContent = parseFloat(this.progress).toFixed(2);
   }
 }

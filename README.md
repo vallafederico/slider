@@ -21,7 +21,7 @@
 
 - [ ] distinguish between click and drag and click (ie elements are links)
 - [ ] better next and previous buttons
-- [ ] progress weird on infinite
+- [x] progress weird on infinite
 
 - [x] speed should be captured also when switching slides via button
 - [x] issue when arrow navigating and infinite

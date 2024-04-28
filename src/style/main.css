@@ -93,6 +93,12 @@ body {
   border: 1px solid pink;
 }
 
+.head {
+  position: fixed;
+  top: 1em;
+  left: 1em;
+}
+
 /* slider */
 
 .slider {
@@ -171,7 +177,7 @@ body {
 
 .ctrl {
   position: fixed;
-  top: 0px;
+  top: 1em;
   /* border: 1px solid pink; */
   height: 10vh;
   width: 100vw;
