@@ -2,7 +2,7 @@
 
 ## WIP
 
-[Deploy](fslide-0.surge.sh)
+[Deploy](smooothy.surge.sh)
 
 ### Features
 
@@ -17,12 +17,14 @@
 
 #### Ideas
 
+- [ ] Events
+
 #### Issues
 
 - [ ] distinguish between click and drag and click (ie elements are links)
-- [ ] better next and previous buttons
-- [x] progress weird on infinite
+- [ ] progress weird (on drag)
 
+- [ ] better next and previous buttons
 - [x] speed should be captured also when switching slides via button
 - [x] issue when arrow navigating and infinite
 - [x] correct current slide when infinite
@@ -36,6 +38,16 @@ https://github.com/davidjerleke/embla-carousel/blob/master/packages/embla-carous
 slide children can have parallax. assign `data-slide="parallax"` to the element. if you want to assign custom amount, you can use `data-parallax="{AMOUNT}"`
 
 #### Slider
+
+##### Setup
+
+| Attribute                | Type      | Default | Description           |
+| ------------------------ | --------- | ------- | --------------------- |
+| [data-slider="w"]        | Mandatory |         | Slides Container      |
+| [data-slider="next"]     | Optional  |         | next slide button     |
+| [data-slider="previous"] | Optional  |         | previous slide button |
+
+##### Options
 
 | Option    | Type      | Default | Description               |
 | --------- | --------- | ------- | ------------------------- |

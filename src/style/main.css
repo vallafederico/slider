@@ -119,7 +119,7 @@ body {
 .slide {
   position: relative;
 
-  width: 30vw;
+  width: 35vw;
   min-height: 40vh;
 
   flex-shrink: 0;
@@ -177,7 +177,7 @@ body {
 
 .ctrl {
   position: fixed;
-  top: 1em;
+  top: 2em;
   /* border: 1px solid pink; */
   height: 10vh;
   width: 100vw;

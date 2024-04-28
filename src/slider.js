@@ -18,6 +18,7 @@ const speedDial = document.querySelector(".speed");
 const speedNum = document.querySelector(".speed-num");
 const progressDial = document.querySelector(".bar");
 const progressNum = document.querySelector(".progress-num");
+const directionNum = document.querySelector(".direction-arrow");
 
 export class Slider {
   // params
@@ -79,6 +80,7 @@ export class Slider {
         this.slideTo(this.current + 1);
       }
     };
+
     // --- debug
   }
 
@@ -133,6 +135,7 @@ export class Slider {
     this.pointer.x = e.clientX - this.pointer.ox;
     this.current += this.pointer.x * this._factor;
     this.pointer.ox = e.clientX;
+
     this._direction = this.pointer.x;
 
     if (this.pointer.psx === 0) this.pointer.psx = e.screenX;
@@ -143,10 +146,17 @@ export class Slider {
   }
 
   set _direction(dir) {
+    dir = Math.sign(dir);
+    if (dir === this.direction) return;
+
+    // (*) EMIT direction change
+
     if (dir > 0) {
-      this.direction = -1;
+      this.direction = dir;
+      directionNum.textContent = "<";
     } else {
-      this.direction = 1;
+      this.direction = dir;
+      directionNum.textContent = ">";
     }
   }
 
@@ -170,6 +180,7 @@ export class Slider {
     // speed calculation
     const speed = this.current - index;
     this.lspeed -= speed;
+    this._direction = -speed;
 
     // > slide to
     this.current = index;
@@ -182,7 +193,7 @@ export class Slider {
     this.store.itemWidth = total / this.slides.length;
 
     if (this._center) {
-      const diff = this.element.clientWidth - this.store.itemWidth;
+      const diff = this.element.offsetWidth - this.store.itemWidth;
       this.element.style.paddingLeft = `${diff / 2}px`;
     }
   }
@@ -255,19 +266,20 @@ export class Slider {
     this.speed = lerp(this.speed, this.lspeed, this._lerp);
     this.lspeed *= 0.9;
 
-    speedDial.style.transform = `translateX(${this.speed * 1000}%)`;
+    speedDial.style.transform = `translateX(${this.speed * 2000}%)`;
     speedNum.textContent = parseFloat(this.speed).toFixed(2);
   }
 
   renderProgress() {
+    // not fucking working
     if (this._infinite) {
       const curr = mod(-this.current, this.store.max + 1);
-      this.progress = map(curr, 0, this.store.max, 0, 1);
+      this.progress = curr / this.store.max;
     } else {
-      this.progress = map(-this.current, 0, this.store.max, 0, 1);
+      this.progress = -this.current / this.store.max;
     }
 
-    progressDial.style.transform = `scaleX(${this.progress})`;
+    // progressDial.style.transform = `scaleX(${this.progress})`;
     progressNum.textContent = parseFloat(this.progress).toFixed(2);
   }
 }
