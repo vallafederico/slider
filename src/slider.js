@@ -85,8 +85,6 @@ export class Slider {
 
     // --- debug
 
-    this.slides.forEach((slide, i) => {});
-
     document.onkeydown = (e) => {
       if (e.key === "ArrowRight") {
         this.slideTo(this.current - 1);
@@ -112,6 +110,16 @@ export class Slider {
 
     document.querySelector("[data-slider='prev']").onclick = () =>
       this.slideTo(this.current + 1);
+
+    const slidesBtns = document.querySelector("[data-slider='slides']");
+    if (slidesBtns) {
+      this.slides.forEach((slide, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = i + 1;
+        btn.onclick = () => this.slideTo(-i);
+        slidesBtns.appendChild(btn);
+      });
+    }
 
     // --- debug
   }
@@ -243,20 +251,26 @@ export class Slider {
   /** Render */
   render() {
     this.time++;
+    this.previousTarget = this.target;
 
     this.renderSpeed();
-    this.renderProgress();
 
     if (this.time % 5 === 0) {
       this._currentSlide = this.current;
     }
 
+    this.renderProgress();
     this.renderRounding();
     if (!this._infinite) this.renderClamp();
 
     this.target = lerpFunc(this.target, this.current, this._lerp);
 
     this.renderDOM();
+
+    if (Math.abs(this.previousTarget - this.target) > 0.001) {
+      // actually sliding shit EMIT BITCH
+      // console.log("**");
+    }
   }
 
   renderDOM() {
@@ -308,20 +322,27 @@ export class Slider {
     this.speed = lerpFunc(this.speed, this.lspeed, this._lerp);
     this.lspeed *= 0.9;
 
+    // *
     speedDial.style.transform = `translateX(${this.speed * 2000}%)`;
-    speedNum.textContent = parseFloat(this.speed).toFixed(2);
+    speedNum.textContent = parseFloat(this.speed).toFixed(4);
   }
 
   renderProgress() {
     // not fucking working
+    let progress;
+
     if (this._infinite) {
-      const curr = mod(-this.current, this.store.max + 1);
-      this.progress = curr / this.store.max;
+      let curr = mod(-this.current.toFixed(4), this.slides.length);
+      if (curr > this.slides.length - 1) curr = this.slides.length - 1;
+      progress = curr / (this.slides.length - 1);
     } else {
-      this.progress = -this.current / this.store.max;
+      progress = -this.current / this.store.max;
     }
 
-    // progressDial.style.transform = `scaleX(${this.progress})`;
+    this.progress = lerp(progress, this.progress, this._lerp);
+
+    // *
+    progressDial.style.transform = `scaleX(${this.progress})`;
     progressNum.textContent = parseFloat(this.progress).toFixed(2);
   }
 }
